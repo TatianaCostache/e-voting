@@ -66,9 +66,6 @@ class Question(models.Model):
     text = models.TextField()
     options = JSONField()
 
-    def get_options(self):
-        return json.loads(self.options)
-
 
 class Answer(models.Model):
     user = models.ForeignKey(User, related_name='answers')

@@ -97,7 +97,7 @@
                                                 {% for question in campaign.questions.all %}
                                                     <li>{{ question.text }}
                                                         <ul>
-                                                            {% for option in question.get_options %}
+                                                            {% for option in question.options %}
                                                                 <li>{{ option }}</li>
                                                             {% endfor %}
                                                         </ul>
