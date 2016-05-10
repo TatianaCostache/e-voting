@@ -39,8 +39,10 @@
                             </fieldset>
                             <fieldset disabled>
                                 <label>Organization</label>
-                                <select id="disabledSelect" class="form-control">
-                                    <option>{{ request.user.profile.organization }}</option>
+                                <select multiple id="disabledSelect" class="form-control">
+                                    {% for org in request.user.profile.organization.all %}
+                                        <option>{{ org }}</option>
+                                    {% endfor %}
                                 </select>
                             </fieldset>
 

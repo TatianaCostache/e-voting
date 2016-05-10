@@ -1,6 +1,8 @@
 from __future__ import unicode_literals
 
 from datetime import datetime
+
+import json
 from django.db import models
 from django.db.models import Count
 from django.dispatch import receiver
@@ -63,6 +65,9 @@ class Question(models.Model):
     campaign = models.ForeignKey(Campaign, related_name='questions')
     text = models.TextField()
     options = JSONField()
+
+    def get_options(self):
+        return json.loads(self.options)
 
 
 class Answer(models.Model):

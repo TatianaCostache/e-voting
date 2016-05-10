@@ -48,17 +48,16 @@ def campaign(request):
     context = RequestContext(request)
     camp_id = request.GET.get('campaign_id')
     campaign = None
-    answares = None
+    answers = None
     if camp_id:
         try:
             campaign = Campaign.objects.get(pk=int(camp_id))
-            answares = Answer.objects.filter(campaign=campaign)
+            answers = Answer.objects.filter(campaign=campaign)
         except Campaign.DoesNotExist:
             pass
     org_choices = request.user.profile.organization.all().values_list('pk', 'name')
-    print org_choices
     data = {'campaign': campaign,
-            'answares': answares,
+            'answers': answers,
             'state_choices': CAMPAIGN_STATE_CHOICES,
             'org_choices': org_choices}
 
