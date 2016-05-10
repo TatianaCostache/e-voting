@@ -12,10 +12,6 @@ import copy
 def dashboard(request):
     context = RequestContext(request)
     campaigns = list(Campaign.objects.all())
-    for i in xrange(10):
-        c = copy.deepcopy(campaigns[0])
-        c.state = random.choice(CAMPAIGN_STATE_CHOICES)[0]
-        campaigns.append(c)
     campaign_count = {'ACTIVE_camp': 0, 'FINISHED_camp':0, 'DRAFT_camp': 0}
     for c in campaigns:
         campaign_count[c.state+'_camp'] += 1
