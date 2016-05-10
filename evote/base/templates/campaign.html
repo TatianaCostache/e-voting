@@ -1,0 +1,109 @@
+{% extends 'blank.html' %}
+{% load tz %}
+
+
+{% block content %}
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header">
+                        Detalii campanie
+                    </h1>
+
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            {% if campaign %}
+                                {{ campaign.name }}
+                            {% else %}
+                                <input id="campaign-name" class="form-control" placeholder="Numele campaniei" style="width: 40%;">
+                            {% endif %}
+                        </div>
+                        <!-- .panel-heading -->
+                        <div class="panel-body">
+                            <div class="panel-group" id="accordion">
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h4 class="panel-title">
+                                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">Informatii generale</a>
+                                        </h4>
+                                    </div>
+                                    <div id="collapseOne" class="panel-collapse collapse in">
+                                        <div class="panel-body">
+                                            <label>Descriere</label>
+                                            <textarea class="form-control" name="description" rows="3" required>{{ campaign.description }}</textarea>
+                                            <label>Status</label>
+                                            <select class="form-control" name="status">
+                                                {% for value, text in state_choices %}
+                                                    <option {% if value == campaign.state %} selected="selected" {%  endif %} value="{{ value }}">{{ text }}</option>
+                                                {% endfor %}
+                                            </select>
+                                            <label>Data pornire</label>
+                                            <div class="form-group">
+                                                <div class='input-group date' id='publish_date' name="publish_date">
+                                                    <input type='text' class="form-control" />
+                                                    <span class="input-group-addon">
+                                                        <span class="glyphicon glyphicon-calendar"></span>
+                                                    </span>
+                                                </div>
+
+                                                <script type="text/javascript">
+                                                    $(function () {
+                                                        $('#publish_date').datetimepicker();
+                                                    });
+                                                </script>
+                                            </div>
+                                            <label>Data finalizare</label>
+                                            <div class="form-group">
+                                                <div class='input-group date' id='end_date' name="end_date">
+                                                    <input type='text' class="form-control" />
+                                                    <span class="input-group-addon">
+                                                        <span class="glyphicon glyphicon-calendar"></span>
+                                                    </span>
+                                                </div>
+
+                                                <script type="text/javascript">
+                                                    $(function () {
+                                                        $('#end_date').datetimepicker();
+                                                    });
+                                                </script>
+                                            </div>
+
+                                            <label>Organizatie</label>
+                                            <select class="form-control" name="organization">
+                                                {% for id, name in org_choices %}
+                                                    <option {% if id == campaign.organization_id %} selected="selected" {%  endif %} value="{{ id }}">{{ name }}</option>
+                                                {% endfor %}
+                                            </select>
+
+
+
+                                    </div>
+                                </div>
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h4 class="panel-title">
+                                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">Intrebari si raspunsuri</a>
+                                        </h4>
+                                    </div>
+                                    <div id="collapseTwo" class="panel-collapse collapse">
+                                        <div class="panel-body">
+                                            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- .panel-body -->
+                    </div>
+                    <!-- /.panel -->
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+
+{% endblock %}
