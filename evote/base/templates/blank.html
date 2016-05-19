@@ -21,6 +21,7 @@
 
     <!-- Custom CSS -->
     <link href="/static/evote_dist/css/sb-admin-2.css" rel="stylesheet">
+    <link href="/static/morrisjs/morris.css" rel="stylesheet">
 
     <!-- Custom Fonts -->
     <link href="/static/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
@@ -36,6 +37,7 @@
 
     <!-- Bootstrap Core JavaScript -->
     <script src="/static/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="/static/bootstrap/dist/js/validator.js"></script>
 
     <!-- Metis Menu Plugin JavaScript -->
     <script src="/static/metisMenu/dist/metisMenu.min.js"></script>
@@ -43,6 +45,7 @@
     <!-- Custom Theme JavaScript -->
     <script src="/static/evote_dist/js/sb-admin-2.js"></script>
     <script src="/static/evote_dist/js/moment.js"></script>
+    <script src="/static/morrisjs/morris.min.js"></script>
     <script type="text/javascript" src="/static/bootstrap/dist/js/bootstrap-datetimepicker.min.js"></script>
 
 </head>
@@ -95,17 +98,31 @@
                     <ul class="nav" id="side-menu">
                         <li class="sidebar-search">
                             <div class="input-group custom-search-form">
-                                <input type="text" class="form-control" placeholder="Cauta campanie...">
+                                <input type="text" id="search-field" class="form-control" placeholder="Cauta campanie...">
                                 <span class="input-group-btn">
-                                    <button class="btn btn-default" type="button">
+                                    <button class="btn btn-default" type="button" id="search-button">
                                         <i class="fa fa-search"></i>
                                     </button>
                                 </span>
                             </div>
+                            <script>
+                                function search(){
+                                    var query = $('#search-field').val();
+                                    if (query){
+                                        window.location.href = '/dashboard/?search_query=' + query;
+                                    }
+                                }
+                                $('#search-button').click(search);
+                                $('#search-field').keypress(function(e) {
+                                    if(e.which == 13) {
+                                        search();
+                                    }
+                                });
+                            </script>
                             <!-- /input-group -->
                         </li>
                         <li>
-                            <a href="/dashboard/"><i class="fa fa-dashboard fa-fw"></i> Pagina principala</a>
+                            <a href="/dashboard/"><i class="fa fa-dashboard fa-fw"></i>Pagina principala</a>
                         </li>
                         {% include 'left-pane.html' %}
                     </ul>

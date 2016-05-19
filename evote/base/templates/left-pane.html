@@ -1,24 +1,27 @@
 {% if request.user.profile.organization %}
     <li>
-        <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> Campaniile mele<span class="fa arrow"></span></a>
+        <a href="/organization-campaigns/"><i class="fa fa-wrench fa-fw"></i>Panou control</a>
+    </li>
+    <li>
+        <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i>Campaniile mele <span class="fa arrow"></span></a>
         <ul class="nav nav-second-level">
             <li>
-                <a href="flot.html">Campanii Active - {{ ACTIVE_camp }}</a>
+                <a href="/organization-campaigns/?filter=active">Campanii Active - {{ ACTIVE_camp }}</a>
             </li>
             <li>
-                <a href="morris.html">Campanii Finalizate - {{ FINISHED_camp }}</a>
+                <a href="/organization-campaigns/?filter=finished">Campanii Finalizate - {{ FINISHED_camp }}</a>
             </li>
             <li>
-                <a href="morris.html">Campanii in Asteptare - {{ DRAFT_camp }}</a>
+                <a href="/organization-campaigns/?filter=draft">Campanii in Asteptare - {{ DRAFT_camp }}</a>
             </li>
         </ul>
         <!-- /.nav-second-level -->
     </li>
     <li>
-        <a href="forms.html"><i class="fa fa-bolt fa-fw"></i> Raport Campanie</a>
+        <a href="forms.html"><i class="fa fa-bolt fa-fw"></i>Raport Campanie</a>
     </li>
     <li>
-        <a href="/campaign/"><i class="fa fa-edit fa-fw"></i> Campanie noua...</a>
+        <a href="/campaign-edit/"><i class="fa fa-edit fa-fw"></i>Campanie noua...</a>
     </li>
 {% else %}
 

@@ -1,0 +1,308 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4 class="panel-title">
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">Informatii generale</a>
+        </h4>
+    </div>
+    <div id="collapseOne" class="panel-collapse collapse in">
+        <div class="panel-body">
+            <div class="form-group">
+                <label>Descriere</label>
+                <textarea class="form-control" id="campaign-description" rows="3" required placeholder="Descrierea campaniei...">{{ campaign.description }}</textarea>
+                <div class="help-block with-errors"></div>
+            </div>
+            <div class="form-group">
+                <label>Status</label>
+                <select class="form-control" id="campaign-state">
+                    {% for value, text in state_choices %}
+                        <option {% if value == campaign.state %} selected="selected" {%  endif %} value="{{ value }}">{{ text }}</option>
+                    {% endfor %}
+                </select>
+                <div class="help-block with-errors"></div>
+            </div>
+            <label>Data pornire</label>
+            <div class="form-group">
+                <div class='input-group date' id='campaign-publish-date'>
+                    <input type='text' class="form-control" id="campaign-pd"/>
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar" id="dt-start"></span>
+                    </span>
+                </div>
+
+                <script type="text/javascript">
+                    $(function () {
+                        $('#campaign-publish-date').datetimepicker();
+                        {% if campaign.publish_date %}
+                            var pub_date = new Date("{{ campaign.publish_date.isoformat }}");
+                        {% else %}
+                            var pub_date = new Date();
+                        {% endif %}
+                        $('#campaign-publish-date').data("DateTimePicker").date(pub_date);
+                        $('#campaign-pd').click(function(event){
+                            console.log('click');
+                            event.preventDefault();
+                            $('#dt-start').click();
+                        });
+                    });
+                </script>
+                <div class="help-block with-errors"></div>
+            </div>
+            <label>Data finalizare</label>
+            <div class="form-group">
+                <div class='input-group date' id='campaign-end-date'>
+                    <input type='text' class="form-control" id="campaign-ed" />
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar" id="dt-end"></span>
+                    </span>
+                </div>
+
+                <script type="text/javascript">
+                    $(function () {
+                        $('#campaign-end-date').datetimepicker();
+                        {% if campaign.end_date %}
+                            var end_date = new Date("{{ campaign.end_date.isoformat }}");
+                        {% else %}
+                            var end_date = new Date();
+                        {% endif %}
+                        $('#campaign-end-date').data("DateTimePicker").date(end_date);
+                        $('#campaign-ed').click(function(event){
+                            console.log('click');
+                            event.preventDefault();
+                            $('#dt-end').click();
+                        });
+                    });
+                </script>
+                <div class="help-block with-errors"></div>
+            </div>
+
+            <label>Organizatie</label>
+            <select class="form-control" id="campaign-organization">
+                {% for id, name in org_choices %}
+                    <option {% if id == campaign.organization_id %} selected="selected" {%  endif %} value="{{ id }}">{{ name }}</option>
+                {% endfor %}
+            </select>
+
+
+
+    </div>
+</div>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4 class="panel-title">
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">Intrebari si raspunsuri</a>
+            </h4>
+        </div>
+        <div id="collapseTwo" class="panel-collapse collapse">
+            <div class="panel-body">
+                <div id="questions">
+                    {% for question in campaign.questions.all %}
+                        <div id="question-div-{{ forloop.counter }}">
+                            <h3>Intrebarea #{{ forloop.counter }}</h3>
+                            <div class="form-group input-group">
+                                <input class="form-control" id="question-{{ forloop.counter }}" value="{{ question.text }}" required>
+                                <span name="remove-question" class="input-group-addon">
+                                    <span class="glyphicon glyphicon-remove" style="color: red;"></span>
+                                </span>
+                                <div class="help-block with-errors"></div>
+                            </div>
+                            <div id="answers-div-{{ forloop.counter }}">
+                                <ul><ul>
+                                    <div id="answers-{{ forloop.counter }}">
+                                        {% for option in question.options %}
+                                            <div class="form-group input-group">
+                                                <input class="form-control" id="answer-{{ forloop.parentloop.counter }}-{{ forloop.counter }}" value="{{ option }}" required>
+                                                <span name="remove-answer" class="input-group-addon">
+                                                    <span class="glyphicon glyphicon-remove" style="color: red;"></span>
+                                                </span>
+                                                <div class="help-block with-errors"></div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                    {% if campaign.state == 'DRAFT' %}
+                                        <button id="addA-{{ forloop.counter }}" type="button" class="btn btn-primary btn-xs ">
+                                            <span class="glyphicon glyphicon-plus"></span>
+                                            Adauga raspuns
+                                        </button>
+                                    {% endif %}
+                                </ul></ul>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                {% if campaign.state == 'DRAFT' %}
+                    <button id="addQ" type="button" class="btn btn-primary btn-xs"><span class="glyphicon glyphicon-plus"></span> Adauga intrebare</button>
+                    <script>
+                        function bind_remove() {
+                            $("[name='remove-answer']").click(function () {
+                                $(this).parent().remove();
+                                re_validate();
+                            });
+                            $("[name='remove-question']").click(function () {
+                                $(this).parent().parent().remove();
+                                $.each($("[id*='question-div-'] h3"), function (idx, item) {
+                                    $(item).text('Intrebarea #' + (idx + 1));
+                                });
+                                re_validate();
+                            });
+                        }
+
+                        function bind_add() {
+                            $('#addQ').unbind('click');
+                            $('#addQ').click(function(){
+                            var q_no = $("[id*='question-div-']").length + 1;
+                            var template = `
+                                            <div id="question-div-qno">
+                                                    <h3>Intrebarea #qno</h3>
+                                                    <div class="form-group input-group">
+                                                        <input class="form-control" id="question-qno" value="" required>
+                                                        <span name="remove-question" class="input-group-addon">
+                                                            <span class="glyphicon glyphicon-remove" style="color: red;"></span>
+                                                        </span>
+                                                    </div>
+                                                    <div id="answers-div-qno">
+                                                        <ul><ul>
+                                                            <div id="answers-qno">
+                                                            </div>
+                                                            <button id="addA-qno" type="button" class="btn btn-primary btn-xs ">
+                                                                <span class="glyphicon glyphicon-plus"></span>
+                                                                Adauga raspuns
+                                                            </button>
+                                                        </ul></ul>
+                                                    </div>
+                                                </div>`;
+                            template = template.replace(/qno/g, q_no);
+                            $('#questions').append(template);
+                                bind_remove();
+                                bind_add();
+                                re_validate();
+                            });
+
+                            $('[id*="addA-"]').unbind('click');
+                            $('[id*="addA-"]').click(function(){
+                                var q_id = this.id.split('-')[1];
+                                var parent = $('#answers-' + q_id);
+                                var a_no = $(parent).find('input[id*="answer-"]').length + 1;
+                                var template = `
+                                                <div class="form-group input-group">
+                                                    <input class="form-control" id="answer-$$q_id-$$a_no" value="" required>
+                                                    <span name="remove-answer" class="input-group-addon">
+                                                        <span class="glyphicon glyphicon-remove" style="color: red;"></span>
+                                                    </span>
+                                                </div>`;
+                                template = template.replace(/\$\$q_id/g, q_id).replace(/\$\$a_no/g, a_no);
+                                var target = $('#answers-div-' + q_id + ' ul div')[0];
+                                $(target).append(template);
+                                bind_remove();
+                                re_validate();
+
+                            })
+
+                        }
+                        {% if campaign.state == 'DRAFT' %}
+                            bind_remove();
+                            bind_add();
+                        {% endif %}
+
+                    </script>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if campaign.state == 'DRAFT' %}
+    <div class="panel-heading">
+    <button id="save-campaign" type="button" class="btn btn-primary btn-xl" style="float: right;">Salveaza campania</button>
+    <script>
+        function collect_data(){
+            var data = {};
+            data['campaign_id'] = null;
+            {% if campaign.id %}
+                data['campaign_id'] = {{ campaign.id }};
+            {% endif %}
+            data['campaign_name'] = $('#campaign-name')[0].value;
+            data['campaign_description'] = $('#campaign-description')[0].value;
+            data['campaign_publish_date'] = $('#campaign-publish-date').data("DateTimePicker").date().toISOString();
+            data['campaign_end_date'] = $('#campaign-end-date').data("DateTimePicker").date().toISOString();
+            data['campaign_state'] = $('#campaign-state').find(":selected").val();
+            data['campaign_organization'] = $('#campaign-organization').find(":selected").val();
+
+            data['questions'] = [];
+            $('[id*="question-div-"]').each(function(){
+                var q_id = this.id.split('-')[2];
+                var q_text = $('#question-' + q_id)[0].value;
+                var answers = [];
+                var selector = "answer-" + q_id + "-";
+                $('[id*=' + selector +']').each(function(){
+                   answers.push(this.value);
+                });
+                data['questions'].push({'text': q_text, 'answers': answers});
+            });
+            return(data);
+        }
+
+        function post_data(){
+            $.ajaxSetup({
+                headers: { "X-CSRFToken": "{{ csrf_token }}" }
+            });
+            var post_obj =                 {
+                    'type': 'POST',
+                    'url': '/campaign-edit/',
+                    'contentType': 'application/json',
+                    'data': JSON.stringify(collect_data()),
+                    'dataType': 'json',
+                    'success': function(data){ window.location.href = data['url']; }
+                };
+            console.log(post_obj);
+            $.ajax(post_obj);
+        }
+
+        $('#save-campaign').click(function(){
+            post_data();
+        });
+    </script>
+</div>
+{% endif %}
+<script>
+    function disable_input(){
+            $('[id*="campaign-"]').prop('disabled', true);
+            $('[id*="answer-"]').prop('disabled', true);
+            $('[id*="question-"]').prop('disabled', true);
+            $('button[id*="add"]').hide();
+        }
+
+    function is_form_valid(attr_id){
+        var result = true;
+        $('#'+attr_id+' .form-group').each(function(){
+                if($(this).hasClass('has-error')){
+                    result = false;
+                    return false;
+                }
+            });
+        return result;
+    }
+
+    function re_validate(){
+        $('#campaign-form').validator('destroy');
+        $('#campaign-form').validator();
+
+        $('#campaign-form').on('invalid.bs.validator', function (e) {
+            $('#save-campaign').prop('disabled', true);
+        })
+
+        $('#campaign-form').on('valid.bs.validator', function (e) {
+            if (is_form_valid('campaign-form')){
+                $('#save-campaign').prop('disabled', false);
+            }
+        })
+
+        $('#campaign-form').validator('validate');
+
+
+    }
+    re_validate();
+
+    {% if campaign.state != 'DRAFT' %}
+        disable_input();
+    {% endif %}
+</script>

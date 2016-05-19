@@ -32,11 +32,24 @@ class UserProfile(models.Model):
     def __str__(self):
         return self.user.username
 
+    def get_campaigns(self, id=None):
+        all = Campaign.objects.filter(organization__in=self.organization.all())
+        if id is not None:
+            all = all.filter(id=id)
+        return all
+
+    def campaign_count(self):
+        campaign_count = {'ACTIVE_camp': 0, 'FINISHED_camp':0, 'DRAFT_camp': 0}
+        for c in self.get_campaigns():
+            campaign_count[c.state+'_camp'] += 1
+
+        return campaign_count
+
 
 class Campaign(models.Model):
     name = models.CharField(max_length=150)
-    description = models.TextField(blank=True, null=True)
-    state = models.CharField(max_length=15, choices=CAMPAIGN_STATE_CHOICES)
+    description = models.TextField(blank=True, null=True, default='')
+    state = models.CharField(max_length=15, choices=CAMPAIGN_STATE_CHOICES, default='DRAFT')
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
     publish_date = models.DateTimeField(blank=True, null=True)
@@ -44,17 +57,19 @@ class Campaign(models.Model):
     private = models.BooleanField(default=False)
     target_group = JSONField(blank=True, null=True, default=None)
     organization = models.ForeignKey(Organization, related_name='campaigns')
+    archived = models.BooleanField(default=False)
+    deleted = models.BooleanField(default=False)
 
     def completion(self):
         def _get_min(td):
             return td.days * 24*60 + td.seconds/60 * 1.0
 
-        percent = _get_min(datetime.utcnow().replace(tzinfo=pytz.utc) - self.publish_date)/_get_min(self.end_date - self.publish_date) * 100
-        return '{0:.1f}'.format(3)
+        percent = _get_min(datetime.utcnow().replace(tzinfo=pytz.utc) - self.publish_date)/(_get_min(self.end_date - self.publish_date) + 1) * 100
+        return '{0:.1f}'.format(percent)
 
 
     def count_voters(self):
-        c = User.objects.filter(answers__campaign__id=self.pk).distinct().count()
+        c = User.objects.filter(answers__campaign__id=self.pk).count()
         return c
 
 
@@ -70,8 +85,10 @@ class Question(models.Model):
 class Answer(models.Model):
     user = models.ForeignKey(User, related_name='answers')
     campaign = models.ForeignKey(Campaign, related_name='answers')
-    question = models.ForeignKey(Question, related_name='answers')
-    response = JSONField()
+    response = JSONField(default=dict())
+
+    class Meta:
+        unique_together = (("user", "campaign"),)
 
 
 class CampaignResult(models.Model):

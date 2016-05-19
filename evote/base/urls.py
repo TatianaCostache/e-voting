@@ -21,9 +21,12 @@ urlpatterns = [
     url(r'^login/$', auth_views.login, {'template_name': 'login.html'}),
     url(r'^logout/$', auth_views.logout, {'template_name': 'logout.html'}),
     url(r'^dashboard/$', voting_views.dashboard, name='dashboard'),
-    url(r'^campaign', voting_views.campaign, name='campaign'),
+    url(r'^organization-campaigns/', voting_views.adm_dashboard, name='adm_dashboard'),
+    url(r'^campaign-edit/', voting_views.campaign, name='campaign'),
     url(r'^profile/$', voting_views.profile, name='profile'),
     url(r'^test/$', TemplateView.as_view(template_name='test.html')),
-    url(r'^.*$', RedirectView.as_view(url='/dashboard/', permanent=False), name='index'),
+    url(r'^vote/', voting_views.vote, name='vote'),
+    url(r'^report/', voting_views.report, name='report'),
+    # url(r'^.*$', RedirectView.as_view(url='/dashboard/', permanent=False), name='index'),
 
 ]

@@ -257,12 +257,12 @@ table.dataTable thead .sorting:after {
 }
 
 .btn-circle {
-    width: 30px;
-    height: 30px;
-    padding: 6px 0;
-    border-radius: 15px;
+    width: 20px;
+    height: 20px;
+    padding: 4px 0;
+    border-radius: 10px;
     text-align: center;
-    font-size: 12px;
+    font-size: 9px;
     line-height: 1.428571429;
 }
 
