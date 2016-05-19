@@ -18,7 +18,7 @@ def dashboard(request):
     if request.method == 'GET':
         context = RequestContext(request)
         search_query = request.GET.get('search_query')
-        campaigns = Campaign.objects.filter(state='ACTIVE')
+        campaigns = Campaign.objects.filter(state='ACTIVE', archived=False)
 
         if search_query:
             campaigns = campaigns.filter(name__icontains=search_query)
@@ -258,21 +258,35 @@ def campaign(request):
         return JsonResponse({'url': reverse('campaign') + '?campaign_id=%s' % campaign.id})
 
     if request.method == 'DELETE':
+        archive_campaign(request)
+
+@login_required(login_url="/login/")
+def archive_campaign(request):
+    if request.method == 'DELETE':
         try:
             data = json.loads(request.body)
+            campaign_id = data['campaign_id']
         except TypeError:
             return HttpResponse("Invalid campaign data.", status=400)
-        user = request.user
+    else:
+        campaign_id = request.GET.get('campaign_id')
 
-        if data['campaign_id']:
-            campaign = user.profile.get_campaigns(id=data['campaign_id'])
-            if not campaign:
-                return HttpResponse("Invalid campaign id", status=400)
-            else:
-                campaign = campaign[0]
-                campaign.archived = True
-                campaign.save()
-                return HttpResponse(status=200)
+    user = request.user
+
+    if campaign_id:
+        campaign = user.profile.get_campaigns(id=campaign_id)
+        if not campaign:
+            return HttpResponse("Invalid campaign id", status=400)
         else:
-            HttpResponse("Unspecified campaign", status=400)
+            campaign = campaign[0]
+            campaign.archived = True
+            campaign.save()
+
+            context = RequestContext(request)
+            data = {'message_status': 'warning', 'message': 'Campania a fost arhivata cu succes.'}
+            context.push(data)
+            context.push(request.user.profile.campaign_count())
+            return render_to_response('status_message.html', context=context)
+    else:
+        HttpResponse("Unspecified campaign", status=400)
 

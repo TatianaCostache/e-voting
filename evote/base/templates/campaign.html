@@ -18,12 +18,21 @@
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <div class="form-group">
-                            {% if campaign.id %}
-                                <input id="campaign-name" class="form-control" value="{{ campaign.name }}" style="width: 40%;" {% if campaign.state != 'DRAFT' %} disabled {% endif %} required>
-                            {% else %}
-                                <input id="campaign-name" class="form-control" placeholder="Numele campaniei" style="width: 40%;" required>
-                            {% endif %}
-                            <div class="help-block with-errors"></div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        {% if campaign.id %}
+                                            <input id="campaign-name" class="form-control" value="{{ campaign.name }}" {% if campaign.state != 'DRAFT' %} disabled {% endif %} required>
+                                        {% else %}
+                                            <input id="campaign-name" class="form-control" placeholder="Numele campaniei"  required>
+                                        {% endif %}
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                    <div class="col-md-6" align="right">
+                                        {% if campaign.id %}
+                                            <a href="/campaign-edit/archive/?campaign_id={{ campaign.id }}" class="btn btn-danger" role="button">Arhiveaza campania</a>
+                                        {% endif %}
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <!-- .panel-heading -->

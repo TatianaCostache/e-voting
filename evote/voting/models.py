@@ -33,7 +33,7 @@ class UserProfile(models.Model):
         return self.user.username
 
     def get_campaigns(self, id=None):
-        all = Campaign.objects.filter(organization__in=self.organization.all())
+        all = Campaign.objects.filter(organization__in=self.organization.all(), archived=False)
         if id is not None:
             all = all.filter(id=id)
         return all
@@ -42,7 +42,6 @@ class UserProfile(models.Model):
         campaign_count = {'ACTIVE_camp': 0, 'FINISHED_camp':0, 'DRAFT_camp': 0}
         for c in self.get_campaigns():
             campaign_count[c.state+'_camp'] += 1
-
         return campaign_count
 
 
@@ -62,9 +61,14 @@ class Campaign(models.Model):
 
     def completion(self):
         def _get_min(td):
-            return td.days * 24*60 + td.seconds/60 * 1.0
+            return td.days * 24*60 + td.seconds/60
 
         percent = _get_min(datetime.utcnow().replace(tzinfo=pytz.utc) - self.publish_date)/(_get_min(self.end_date - self.publish_date) + 1) * 100
+        if percent > 100:
+            percent = 100
+        elif percent <= 0:
+            percent = 1
+
         return '{0:.1f}'.format(percent)
 
 
