@@ -22,6 +22,7 @@ urlpatterns = [
     url(r'^logout/$', auth_views.logout, {'template_name': 'logout.html'}),
     url(r'^dashboard/$', voting_views.dashboard, name='dashboard'),
     url(r'^organization-campaigns/', voting_views.adm_dashboard, name='adm_dashboard'),
+    url(r'^my-campaigns/', voting_views.my_dashboard, name='my_dashboard'),
     url(r'^campaign-edit/archive/', voting_views.archive_campaign, name='archive_campaign'),
     url(r'^campaign-edit/', voting_views.campaign, name='campaign'),
     url(r'^profile/$', voting_views.profile, name='profile'),

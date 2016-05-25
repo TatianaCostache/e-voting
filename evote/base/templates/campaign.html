@@ -21,9 +21,9 @@
                                 <div class="row">
                                     <div class="col-md-6">
                                         {% if campaign.id %}
-                                            <input id="campaign-name" class="form-control" value="{{ campaign.name }}" {% if campaign.state != 'DRAFT' %} disabled {% endif %} required>
+                                            <input id="campaign-name" type="text" class="form-control" value="{{ campaign.name }}" {% if campaign.state != 'DRAFT' %} disabled {% endif %} required>
                                         {% else %}
-                                            <input id="campaign-name" class="form-control" placeholder="Numele campaniei"  required>
+                                            <input id="campaign-name" type="text" class="form-control" placeholder="Numele campaniei"  required>
                                         {% endif %}
                                         <div class="help-block with-errors"></div>
                                     </div>

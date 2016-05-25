@@ -19,14 +19,35 @@ def dashboard(request):
         context = RequestContext(request)
         search_query = request.GET.get('search_query')
         campaigns = Campaign.objects.filter(state='ACTIVE', archived=False)
+        already_voted = set(request.user.answers.all().values_list('campaign_id', flat=True))
+
+        if search_query:
+            campaigns = campaigns.filter(name__icontains=search_query)
+
+        for campaign in campaigns:
+            if campaign.id in already_voted:
+                campaign.voted = True
+            else:
+                campaign.voted = False
+        context.push({'campaigns': campaigns})
+        context.push(request.user.profile.campaign_count())
+        return render_to_response('dashboard.html', context=context)
+
+
+@login_required(login_url="/login/")
+def my_dashboard(request):
+    if request.method == 'GET':
+        context = RequestContext(request)
+        search_query = request.GET.get('search_query')
+        campaign_ids = set(request.user.answers.all().values_list('campaign_id', flat=True))
+        campaigns = Campaign.objects.filter(pk__in=campaign_ids)
 
         if search_query:
             campaigns = campaigns.filter(name__icontains=search_query)
 
         context.push({'campaigns': campaigns})
         context.push(request.user.profile.campaign_count())
-        return render_to_response('dashboard.html', context=context)
-
+        return render_to_response('adm_dashboard.html', context=context)
 
 @login_required(login_url="/login/")
 def vote(request):

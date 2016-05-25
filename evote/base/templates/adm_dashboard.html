@@ -54,10 +54,13 @@
                             </div>
                             <div class="panel-footer" align="center">
                                 <div class="row">
+
                                 <div class="col-md-6">
-                                    <a href="/campaign-edit/?campaign_id={{ campaign.pk }}">
-                                        <i class="fa fa-edit fa-fw"></i> Detalii
-                                    </a>
+                                    {% if campaign.organization in user.profile.organization.all %}
+                                        <a href="/campaign-edit/?campaign_id={{ campaign.pk }}">
+                                            <i class="fa fa-edit fa-fw"></i> Detalii
+                                        </a>
+                                    {% endif %}
                                 </div>
                                 <div class="col-md-6">
                                     <a href="/report/?campaign_id={{ campaign.pk }}">

@@ -4,7 +4,7 @@
 {% block content %}
             <div class="row">
                 <div class="col-lg-12">
-                    <h1 class="page-header">Campanii active</h1>
+                    <h3 class="page-header">Campanii active</h3>
                 </div>
                 <!-- /.col-lg-12 -->
             </div>
@@ -34,9 +34,13 @@
                                 <p>Numar votanti: {{ campaign.count_voters }}</p>
                             </div>
                             <div class="panel-footer" align="center">
-                                <a href="/vote/?campaign_id={{ campaign.pk }}">
-                                    <i class="glyphicon glyphicon-ok"></i> Voteaza!
-                                </a>
+                                {% if not campaign.voted %}
+                                    <a href="/vote/?campaign_id={{ campaign.pk }}">
+                                        <i class="glyphicon glyphicon-exclamation-sign"></i> Voteaza!
+                                    </a>
+                                {% else %}
+                                    <i class="glyphicon glyphicon-ok"></i> Ai votat deja.
+                                {% endif %}
                             </div>
                         </div>
                     </div>

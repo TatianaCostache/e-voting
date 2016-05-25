@@ -264,6 +264,14 @@
 </div>
 {% endif %}
 <script>
+    $('#campaign-form input[type=text], textarea').on('change invalid', function() {
+            var textfield = $(this).get(0);
+            textfield.setCustomValidity('');
+            if (!textfield.validity.valid) {
+              textfield.setCustomValidity('Va rugam completati campul.');
+            }
+        });
+
     function disable_input(){
             $('[id*="campaign-"]').prop('disabled', true);
             $('[id*="answer-"]').prop('disabled', true);
@@ -284,7 +292,10 @@
 
     function re_validate(){
         $('#campaign-form').validator('destroy');
-        $('#campaign-form').validator();
+        $('#campaign-form').validator({errors: {
+  match: 'Does not match',
+  minlength: 'Not long enough'
+}});
 
         $('#campaign-form').on('invalid.bs.validator', function (e) {
             $('#save-campaign').prop('disabled', true);
