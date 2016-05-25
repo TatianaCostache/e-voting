@@ -45,7 +45,7 @@ def my_dashboard(request):
         if search_query:
             campaigns = campaigns.filter(name__icontains=search_query)
 
-        context.push({'campaigns': campaigns})
+        context.push({'campaigns': campaigns, 'page_title': 'Campanii Raspunse'})
         context.push(request.user.profile.campaign_count())
         return render_to_response('adm_dashboard.html', context=context)
 
@@ -125,8 +125,6 @@ def report(request):
             for question, response in answer.response.iteritems():
                 answer_data[int(question)][response] += 1
 
-
-
         final_data = []
         for question in questions:
             aux = {'id': question.id,
@@ -161,8 +159,6 @@ def report(request):
         for item in final_data:
             item['options'] = json.dumps(item['options'])
             item['data'] = json.dumps(item['data'])
-
-
 
         data = {'answer_data': final_data,
                 'total_votes': total_count,
@@ -219,14 +215,21 @@ def profile(request):
 @login_required(login_url="/login/")
 def campaign(request):
     if request.method == 'GET':
+        if not request.user.profile.organization.all():
+            return HttpResponse("User is not a moderator", status=400)
+
         context = RequestContext(request)
         camp_id = request.GET.get('campaign_id')
         if camp_id:
             try:
-                campaign = Campaign.objects.get(pk=int(camp_id))
+                campaigns = request.user.profile.get_campaigns(id=int(camp_id))
+                if not campaigns:
+                    return HttpResponse("Invalid campaign id", status=400)
+                campaign = campaigns[0]
                 answers = Answer.objects.filter(campaign=campaign)
             except Campaign.DoesNotExist:
-                pass
+                campaign = Campaign()
+                answers = None
         else:
             campaign = Campaign()
             answers = None
@@ -255,6 +258,8 @@ def campaign(request):
             if campaign.state != 'DRAFT':
                 return HttpResponse("Unable to update active campaign", status=400)
         else:
+            if not request.user.profile.organization.all():
+                return HttpResponse("User is not a moderator", status=400)
             campaign = Campaign()
 
         try:
