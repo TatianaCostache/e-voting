@@ -63,7 +63,7 @@ class Campaign(models.Model):
         def _get_min(td):
             return td.days * 24*60 + td.seconds/60
 
-        percent = _get_min(datetime.utcnow().replace(tzinfo=pytz.utc) - self.publish_date)/(_get_min(self.end_date - self.publish_date) + 1) * 100
+        percent = abs((datetime.utcnow().replace(tzinfo=pytz.utc) - self.publish_date).total_seconds())/(abs((self.end_date - self.publish_date).total_seconds) + 1) * 100
         if percent > 100:
             percent = 100
         elif percent <= 0:
