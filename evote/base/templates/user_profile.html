@@ -22,7 +22,7 @@
                             <input class="form-control" name="first_name" value="{{ request.user.first_name }}" required>
                             <label>Email</label>
                             <input class="form-control" name="email" value="{{ request.user.email }}" required>
-                            <label>Age</label>
+                            <label>Varsta</label>
                             <input class="form-control" name="age" value="{{ request.user.profile.age }}" required>
                             <label>Sex</label>
                             <select class="form-control" name="sex">
@@ -30,7 +30,7 @@
                                     <option {% if value == request.user.profile.sex %} selected="selected" {%  endif %} value="{{ value }}">{{ text }}</option>
                                 {% endfor %}
                             </select>
-                            <label>City</label>
+                            <label>Oras</label>
                             <select class="form-control" name="city">
                                 {% for value, text in city_choices %}
                                     <option {% if value == request.user.profile.city %} selected="selected" {%  endif %} value="{{ value }}">{{ text }}</option>
@@ -38,7 +38,7 @@
                             </select>
                             </fieldset>
                             <fieldset disabled>
-                                <label>Organization</label>
+                                <label>Organizatie</label>
                                 <select multiple id="disabledSelect" class="form-control">
                                     {% for org in request.user.profile.organization.all %}
                                         <option>{{ org }}</option>

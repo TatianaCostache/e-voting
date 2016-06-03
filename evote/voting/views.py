@@ -187,9 +187,6 @@ def adm_dashboard(request):
         return render_to_response('adm_dashboard.html', context=context)
 
 
-def logout(request):
-    logout(request)
-
 @login_required(login_url="/login/")
 def profile(request):
     if request.method == 'POST':
