@@ -29,6 +29,7 @@ urlpatterns = [
     url(r'^test/$', TemplateView.as_view(template_name='test.html')),
     url(r'^vote/', voting_views.vote, name='vote'),
     url(r'^report/', voting_views.report, name='report'),
+    url(r'^favicon.ico', RedirectView.as_view(url='/static/favicon.ico', permanent=True), name='favicon'),
     url(r'^.*$', RedirectView.as_view(url='/dashboard/', permanent=False), name='index'),
 
 ]

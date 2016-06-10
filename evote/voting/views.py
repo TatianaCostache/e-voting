@@ -45,7 +45,7 @@ def my_dashboard(request):
         if search_query:
             campaigns = campaigns.filter(name__icontains=search_query)
 
-        context.push({'campaigns': campaigns, 'page_title': 'Campanii Raspunse'})
+        context.push({'campaigns': campaigns, 'page_title': 'Campanii Finalizate'})
         context.push(request.user.profile.campaign_count())
         return render_to_response('adm_dashboard.html', context=context)
 
